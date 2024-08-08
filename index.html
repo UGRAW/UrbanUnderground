@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Slideshow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="slideshow-container">
+        <div id="slides" class="slides">
+            <!-- News slides will be injected here by JavaScript -->
+        </div>
+        <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a class="next" onclick="changeSlide(1)">&#10095;</a>
+        <div class="dots-container"></div> <!-- Dot container -->
+    </div>
+
+    <div class="news-form">
+        <h2>Add News</h2>
+        <input type="text" id="news-title" placeholder="News Title">
+        <textarea id="news-description" placeholder="News Description"></textarea>
+        <input type="file" id="news-image" accept="image/*">
+        <button onclick="addNews()">Add News</button>
+        <button class="delete-button" onclick="deleteCurrentNews()">Delete</button>
+        
+    </div>
+
+    <div id="edit-popup" class="popup" style="display:none;">
+        <div class="popup-content">
+            <h2>Edit News</h2>
+            <input type="text" id="edit-news-title" placeholder="News Title">
+            <textarea id="edit-news-description" placeholder="News Description"></textarea>
+            <input type="file" id="edit-news-image" accept="image/*">
+            <button onclick="applyEdit()">Apply</button>
+            <button onclick="closeEditPopup()">Cancel</button>
+        </div>
+    </div>
+
+    
+    
+
+    <script src="news.js"></script>
+    <script src="index.js"></script>    
+    <style>
+ .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .edit-form {
+            margin-top: 20px;
+            text-align: center;
+            max-width: 960px;
+        }
+
+        .edit-form input, .edit-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+
+
+.dots-container {
+    position: absolute;
+    bottom: 7px; /* 7px from the bottom of the container */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px; /* Space between dots */
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: gray;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: white;
+}
+
+
+
+        .edit-form button {
+            padding: 10px 20px;
+            background-color: #04AA6D;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-form button:hover {
+            background-color: #45a049;
+        }
+
+        .cancel-button {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .cancel-button:hover {
+            background-color: #b0b0b0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slideshow-container {
+    position: relative;
+    width: 960px; /* 16:9 aspect ratio */
+    height: 540px; /* Corresponding height for 16:9 ratio */
+    margin: auto;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dots-container {
+    position: absolute;
+    bottom: 7px; /* 7px from the bottom of the container */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px; /* Space between dots */
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: gray;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: white;
+}
+
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            height: 100%;
+        }
+
+        .slide img, .no-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide h2 {
+            position: absolute;
+            bottom: 7px;
+            left: 7px;
+            margin: 0;
+            padding: 7px;
+            background-color: rgba(0, 0, 0, 0.7);
+            font-size: 1.5em;
+            color: white;
+        }
+
+        .slide p {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease;
+        }
+
+        .slide:hover p {
+            opacity: 1;
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .news-form {
+            margin-top: 20px;
+            text-align: center;
+            max-width: 960px;
+        }
+
+        .news-form input, .news-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .news-form button {
+            padding: 10px 20px;
+            background-color: #04AA6D;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .news-form button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #444;
+            color: #ccc;
+            font-size: 2em;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</body>
+</html>
